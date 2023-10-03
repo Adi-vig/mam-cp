@@ -31,6 +31,16 @@ extern memory_malloc
 ; @returns
 ;   A handle to the linked list which can be passed to further linked list methods.
 ;
+
+
+; entity is a structure
+; x
+; y
+; width 
+; height
+
+
+
 linked_list_init:
     push rbp
     mov rbp, rsp
@@ -67,22 +77,22 @@ linked_list_push_back:
 
 
     ; find end of list
-linked_list_push_back_find_end:
-    mov rcx, [rbx + 0x8] ; get next pointer
-    cmp rcx, 0x0 ; if null then we are at the last node
-    je linked_list_push_back_do_insert
+    linked_list_push_back_find_end:
+        mov rcx, [rbx + 0x8]     ; get next pointer ///  (width)+ 8 gives next X 
+        cmp rcx, 0x0 ; if null then we are at the last node
+        je linked_list_push_back_do_insert
 
-    add rbx, 0x10
-    jmp linked_list_push_back_find_end
+        add rbx, 0x10           ; x y hight _width_  8 + (8+8) = 8 + 10
+        jmp linked_list_push_back_find_end
 
-linked_list_push_back_do_insert:
-    push rbx
-    mov rdi, rsi
-    call allocate_node ; allocate new node
+    linked_list_push_back_do_insert:
+        push rbx
+            mov rdi, rsi
+            call allocate_node  ; allocate new node
+        pop rbx
 
-    pop rbx
-    mov [rbx + 0x8], rax ; set new node as next of last node
-    mov rax, [rbx + 0x8] ; set return value as address of new node
+        mov [rbx + 0x8], rax    ; set new node as next of last node
+        mov rax, [rbx + 0x8]    ; set return value as address of new node
 
     pop rbp
     ret
