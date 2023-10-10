@@ -1,3 +1,6 @@
+run:
+	./asm_game
+
 obj:
 	nasm -felf64 graphics.asm    -o obj/graphics.o
 	nasm -felf64 linked_list.asm -o obj/linked_list.o
