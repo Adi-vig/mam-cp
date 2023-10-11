@@ -37,6 +37,25 @@ extern render_end
 extern sleep_ms
 extern try_get_event
 
+
+
+
+
+
+%macro  PRINTM  2
+	mov   rax, 1
+	mov   rdi, 1
+	mov   rsi, %1
+	mov   rdx, %2
+	syscall
+%endmacro
+
+
+
+
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Entry point to the program
 ;
@@ -50,6 +69,17 @@ _start:
 
 main_loop_start:
     ; get time at start of frame
+
+
+    call check_finish
+
+
+
+
+
+
+
+
     call get_time
     mov [frame_time], rax
 
@@ -277,14 +307,38 @@ brick_collision_loop_start:
 
     jmp brick_collision_loop_start
 
+
+
+
+
+
+
+
+
+
+
 handle_collision_found:
     ; remove block from linked list
+    mov rdi, [score]
+    inc rdi
+    mov [score],rdi
+
+    ; mov rax , [ball_velocity_x]
+    ; inc rax
+    ; ; mov [ball_velocity_x],rax
+    ; mov rax,[ball_velocity_y]
+    ; mov rdi ,
+    ; mul rdi
+    
+    ; mov [ball_velocity_y],rax
+
+
     mov rdi, [entity_list]
     mov rsi, [rsp]
     call linked_list_iterator_remove
 
     ; invert ball velocity
-    mov rax, 0xa
+    mov rax, 15
     mov [ball_velocity_y], rax
 
 brick_collision_loop_end:
@@ -310,7 +364,7 @@ handle_ball_paddle_collision:
     jge check_middle
 
     ; if it did then set the ball moving up and left
-    mov rax, -7
+    mov rax, -10
     mov [ball_velocity_x], rax
     mov [ball_velocity_y], rax
     jmp handle_ball_paddle_collision_end
@@ -324,15 +378,15 @@ check_middle:
     ; if it did then set the ball moving straight up
     mov rax, 0
     mov [ball_velocity_x], rax
-    mov rax, -10
+    mov rax, -15
     mov [ball_velocity_y], rax
     jmp handle_ball_paddle_collision_end
 
 check_end:
     ; the only other choice is the paddle hit the right third, so move it up and right
-    mov rax, 7
+    mov rax, 10
     mov [ball_velocity_x], rax
-    mov rax, -7
+    mov rax, -10
     mov [ball_velocity_y], rax
     jmp handle_ball_paddle_collision_end
 
@@ -444,12 +498,37 @@ check_ball_left_side:
     ; check if ball has gone of the left of the screen
     mov rax, [ball_x]
     cmp rax, 0
-    jg ball_update_end
+    jg check_ball_top_side
 
     ; invert x velocity
     mov rax, [ball_velocity_x]
     neg rax
     mov [ball_velocity_x], rax
+
+
+check_ball_top_side:
+    mov rax, [ball_y]
+    cmp rax, 800
+    jl ball_update_end
+
+    ; invert x velocity
+    PRINTM game_over, len_game_over
+    ; lea rdi, [game_over]
+    ; call print
+
+		
+	mov 		rax,[score]		 ; load value of n_count in rax
+	call 		disp64_proc		     ; display n_count
+
+    ; lea rdi , [newline]
+    ; call print
+    PRINTM newline, len_newline
+
+    mov rdi, 0x0
+    call exit
+; use macro
+
+
 
 ball_update_end:
     pop rbp
@@ -560,7 +639,103 @@ create_row_end:
     pop rbp
     ret
 
+
+
+
+
+
+
+check_finish:
+    mov rax, [score]
+    cmp rax, 10
+    jge WINNER
+ret
+
+
+WINNER:
+    ; lea rdi, [game_win]
+    ; call print
+    PRINTM game_win,len_game_win
+
+		
+	mov 		rax,[score]		 ; load value of n_count in rax
+	call 		disp64_proc		     ; display n_count
+
+    ; lea rdi , [newline]
+    ; call print
+
+    PRINTM newline , len_newline
+
+    mov rdi, 0x0
+    call exit
+ret
+
+
+
+
+
+; disp64_proc:
+; 	mov 		rbx, 16                 ; divisor=16 for hex
+; 	mov 		rcx,2			        ; number of digits 
+; 	mov 		rsi,char_ans+1	        ; load last byte address of char_ans buffer in rsi
+; cnt:        
+;     mov 		rdx,0		            ; make rdx=0 (as in div instruction	                                                                rdx:rax/rbx)
+; 	div 		rbx
+; 	cmp 		dl, 09h			        ; check for remainder in rdx
+; 	jbe  	    add30					; jump if below or equal to 09h
+; 	add  	    dl, 07h 
+; add30:
+;     add 		dl,30h			        ; calculate ASCII code
+; 	mov 		[rsi],dl		        ; store it in buffer
+; 	dec 		rsi			            ; point to one byte back
+; 	dec 		rcx			            ; decrement count
+; 	jnz 		cnt			            ; if not zero repeat
+; 	PRINTM       char_ans,2		        ; display result on screen
+; ret
+;----------------------------------------------------------------
+
+
+
+disp64_proc:
+    mov     rbx, 10               ; divisor=10 for decimal
+    mov     rcx, 2                ; number of digits
+    mov     rsi, char_ans+1       ; load last byte address of char_ans buffer in rsi
+cnt:
+    xor     rdx, rdx              ; Clear any previous remainder
+    div     rbx
+    add     dl, '0'               ; Convert remainder to ASCII
+    mov     [rsi], dl             ; Store it in buffer
+    dec     rsi                   ; Point to one byte back
+    dec     rcx                   ; Decrement count
+    jnz     cnt                   ; If not zero, repeat
+    PRINTM  char_ans, 2           ; Display the result on the screen
+    ret
+
+
+
+
+
+
+
+
+
 section .data
+
+    game_over db 10,"***********GAME OVER************",10,"YOUR SCORE : "
+    len_game_over equ $-game_over 
+
+
+    game_win db 10, "***********YOUVE WON************",10,"YOUR SCORE : "
+    len_game_win equ $-game_win 
+
+
+    newline db 10, "**********************************",10,10
+    len_newline equ $-newline
+
+
+
+
+
     entity_list: dq 0x0
 
     paddle_x: dq 0x12c
@@ -570,12 +745,12 @@ section .data
 
 
     ball_x:      dq 0x1a4
-    ball_y:      dq 0x190
+    ball_y:      dq 0x120
     ball_width:  dq 0xa
     ball_height: dq 0xa
 
     
-    ball_velocity_y: dq 0xa
+    ball_velocity_y: dq 0xf
     ball_velocity_x: dq 0x0
 
     left_arrow_status: dq 0x0
@@ -583,7 +758,22 @@ section .data
     
     frame_time: dq 0x0
 
+    score: dq 0x0
+    char_ans	db	2
+
 section .rodata
     hello_world: db "hello world", 0xa, 0x0
     goodbye: db "goodbye", 0xa, 0x0
     sleep_for: db "sleep_for: ", 0x0
+
+; section .bss 
+    
+
+
+
+
+
+
+
+
+
