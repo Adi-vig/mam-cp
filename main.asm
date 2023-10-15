@@ -474,12 +474,12 @@ ball_update:
 
     ; add y velocity to ball
     mov rax, [ball_y]
-    ; add rax, [ball_velocity_y]
+    add rax, [ball_velocity_y]
     mov [ball_y], rax
 
     ; add x velocity to ball
     mov rax, [ball_x]
-    ; add rax, [ball_velocity_x]
+    add rax, [ball_velocity_x]
     mov [ball_x], rax
 
     ; check if ball has gone off the top of the screen
