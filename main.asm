@@ -686,7 +686,6 @@ ret
 
 
 
-
 ; disp64_proc:
 ; 	mov 		rbx, 16                 ; divisor=16 for hex
 ; 	mov 		rcx,2			        ; number of digits 
