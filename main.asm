@@ -201,7 +201,22 @@ main_loop_end:
     lea rdi, [goodbye]
     call print
 
+    PRINTM game_over, len_game_over
+    ; lea rdi, [game_over]
+    ; call print
+
+		
+	mov 		rax,[score]		 ; load value of n_count in rax
+	call 		disp64_proc		     ; display n_count
+
+    ; lea rdi , [newline]
+    ; call print
+    PRINTM newline, len_newline
+
+
     mov rdi, 0x0
+
+
     call exit
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
