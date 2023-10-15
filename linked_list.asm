@@ -31,6 +31,16 @@ extern memory_malloc
 ; @returns
 ;   A handle to the linked list which can be passed to further linked list methods.
 ;
+
+
+; entity is a structure
+; x
+; y
+; width 
+; height
+
+
+
 linked_list_init:
     push rbp
     mov rbp, rsp
