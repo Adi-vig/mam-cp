@@ -1,8 +1,3 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;         Distributed under the Boost Software License, Version 1.0.          ;;
-;;            (See accompanying file LICENSE or copy at                        ;;
-;;                 https://www.boost.org/LICENSE_1_0.txt)                      ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 section .text
 
@@ -479,12 +474,12 @@ ball_update:
 
     ; add y velocity to ball
     mov rax, [ball_y]
-    add rax, [ball_velocity_y]
+    ; add rax, [ball_velocity_y]
     mov [ball_y], rax
 
     ; add x velocity to ball
     mov rax, [ball_x]
-    add rax, [ball_velocity_x]
+    ; add rax, [ball_velocity_x]
     mov [ball_x], rax
 
     ; check if ball has gone off the top of the screen
@@ -579,6 +574,9 @@ create_entities:
     mov rdi, 170
     call create_brick_row
     mov rdi, 200
+    call create_brick_row
+
+    mov rdi, 230
     call create_brick_row
 
     pop rbp

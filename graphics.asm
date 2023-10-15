@@ -4,6 +4,7 @@
 ;;                 https://www.boost.org/LICENSE_1_0.txt)                      ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 global create_window
 global try_get_event
 
