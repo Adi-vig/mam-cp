@@ -26,41 +26,42 @@ extern XSelectInput
 extern XSetForeground
 extern XWhitePixel
 
+
+; from utils asm
 extern assert_not_null
-extern assert_null
+; extern assert_null
 extern render_begin_clear_window
 extern draw_rectangle
 extern render_end
 extern print
 extern print_num
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This file contains functions for creating a window and rendering to it.
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Create and display an X Window.
 ;
 create_window:
     push rbp
     mov rbp, rsp
 
-    ; X11 window setup
+    ; X11 window setup 
 
     mov rdi, 0x0
-    call XOpenDisplay
-                            ; return address to display 
-    mov [display], rax
-    mov rdi, rax
+    call XOpenDisplay       ; Create a Display* ........ display pointer
+                            ; create a display pointer and return to rax 
+    mov [display], rax       ; move the newly created Display* ptr to display variale
+    mov rdi, rax                
     lea rsi, [x_open_display_failed]
     call assert_not_null
 
     call XDefaultScreen
-    mov [screen_number], rax
+    mov [screen_number], rax        ; get the screen number
 
-    mov rdi, [display]
-    mov rsi, [screen_number]
-    call XWhitePixel        ; return the value of white pixel
+    ; return the default screen number referenced by the XOpenDisplay function. This macro or function should be used to retrieve the screen number in applications that will use only a single  screen
+
+    mov rdi, [display]  
+    mov rsi, [screen_number]    
+    call XWhitePixel                ;  return the white pixel value for the specified screen.
     mov [white_colour], rax
 
     mov rdi, [display]
@@ -69,8 +70,8 @@ create_window:
     mov [black_colour], rax
 
     mov rdi, [display]
-    call XDefaultRootWindow
-    mov [default_root_window], rax
+    call XDefaultRootWindow     
+    mov [default_root_window], rax      ; get the default root/parent window
 
     mov rdi, [display]
     mov rsi, [default_root_window]
@@ -79,12 +80,51 @@ create_window:
     mov r8, 0x320
     mov r9, 0x320
     mov rax, [black_colour]
-    push rax
+
+    push 0x30
+    ; push rax
     push rax
     push 0x0
     call XCreateSimpleWindow
 
-    mov [window], rax
+
+;     Window XCreateSimpleWindow(display, parent, x, y, width, height, border_width,
+;                               border, background)
+        ; Display *display;
+        ; Window parent;
+        ; int x, y;
+        ; unsigned int width, height;
+        ; unsigned int border_width;
+        ; unsigned long border;
+        ; unsigned long background;
+        ; display Specifies the connection to the X server.
+        ; parent Specifies the parent window.
+        ; 
+        
+        ; x
+        ; y Specify the x and y coordinates, which are the top-left outside corner of the new
+        ; window’s borders and are relative to the inside of the parent window’s borders.
+        
+        
+        ; width
+        ; height Specify the width and height, which are the created window’s inside dimensions
+        ; and do not include the created window’s borders. The dimensions must be
+        ; nonzero, or a BadValue error results.
+        
+        ; border_width Specifies the width of the created window’s border in pixels.
+        
+        ; border Specifies the border pixel value of the window.
+        
+        ; background Specifies the background pixel value of the window.
+
+
+
+
+
+
+
+
+    mov [window], rax           ;returns the window ID of the created window
     add rsp, 0x18
 
     mov rdi, [display]
@@ -116,7 +156,6 @@ wait_loop_start:
 
     jmp wait_loop_start
 wait_loop_end:
-
     pop rbp
     ret
 
@@ -191,18 +230,39 @@ draw_rectangle:
     mov rdx, [white_colour]
     call XSetForeground
 
-    ; draw paddle
+    ; draw rectangle 
     mov rdi, [display]
     mov rsi, [window]
     mov rdx, [gc]
     pop rcx
     pop r8
-    pop r9 ; note that the last arg is now at at the top of the stack
+    pop r9 ; note that the last arg is now at at the top of the stack height which was pusshed first (push rcx)
     call XFillRectangle
     add rsp, 0x8
 
     pop rbp
     ret
+
+; XFillRectangle (display, d, gc, x, y, width, height)
+; Display *display;
+; Drawable d;
+; GC gc;
+; int x, y;
+; unsigned int width, height;
+; display Specifies the connection to the X server.
+; d Specifies the drawable.
+; gc Specifies the GC.
+; x
+; y Specify the x and y coordinates, which are relative to the origin of the drawable
+; and specify the upper-left corner of the rectangle.
+; width
+; height Specify the width and height, which are the dimensions of the rectangle to be
+; filled.
+
+
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perform post-render tasks

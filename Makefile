@@ -10,7 +10,7 @@ obj:
 
 	
 link:
-	ld --dynamic-linker /lib64/ld-linux-x86-64.so.2 obj/graphics.o obj/linked_list.o obj/main.o obj/memory.o obj/utils.o  -o asm_game  -lX11 
+	ld --dynamic-linker /lib64/ld-linux-x86-64.so.2 obj/graphics.o obj/linked_list.o obj/main.o obj/memory.o obj/utils.o  -o asm_game  -lX11
 	
 
 all:

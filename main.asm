@@ -64,17 +64,7 @@ _start:
 
 main_loop_start:
     ; get time at start of frame
-
-
     call check_finish
-
-
-
-
-
-
-
-
     call get_time
     mov [frame_time], rax
 
@@ -104,7 +94,7 @@ handle_key:
     mov rsi, 0x0
     call XLookupKeysym
 
-    ; see if its an XK_Escape
+    ; see if its an XK_Escape 
     cmp rax, 0xff1b
     jne handle_arrow_key
 
@@ -149,6 +139,8 @@ left_release:
     mov rax, 0x0
     mov [left_arrow_status], rax
 
+
+
 game_logic:
     mov rax, [right_arrow_status]
     cmp rax, 0x0
@@ -157,6 +149,7 @@ game_logic:
     mov rax, [paddle_x]
     add rax, 10
     mov [paddle_x], rax
+
 right_arrow_update_finish:
 
     mov rax, [left_arrow_status]
@@ -171,10 +164,9 @@ left_arrow_update_finish:
     call ball_update
     call handle_collisions
     call render
-    
     ; get end frame time
     call get_time
-
+    ; rax = current time 
     ; see if we have spent less than 30ms in this frame
     mov rbx, [frame_time]
     sub rax, rbx
@@ -183,12 +175,15 @@ left_arrow_update_finish:
     jg main_loop_start
 
     ; sleep for remainder of 30ms
+    ; if currenttime- frame_time =20  ...... sleep for 10 seconds
     mov rbx, 30
     sub rbx, rax
     mov rdi, rbx
     call sleep_ms
         
     jmp main_loop_start
+
+
 
 
 main_loop_end:
@@ -213,6 +208,18 @@ main_loop_end:
 
 
     call exit
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Render the entity list.
@@ -257,6 +264,22 @@ render_loop_end:
     ret
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perform collision detections and resolutions.
 ;
@@ -279,7 +302,10 @@ handle_collisions:
 
     lea rdi, [ball_x]
     mov rsi, rax                        ;
-    call check_entity_collision
+    call check_entity_collision         ; rdi has Ball objecy
+                                        ; rsi has current iteration object
+                                        ; compare x y height and width if they overlap its a collison
+                                        ; return 0 is no collision
 
     cmp rax, 0x0                    ; 0x1 if collision
     je paddle_collision_end
@@ -316,9 +342,6 @@ brick_collision_loop_start:
     mov [rsp], rax
 
     jmp brick_collision_loop_start
-
-
-
 
 
 
@@ -618,16 +641,19 @@ create_row_start:
     cmp rax, 10
     je create_row_end ; leave loop if we have added 10 bricks
 
-    mov rdi, 32
+    mov rdi, 32         ; 8 8 8 8  x y width height
     call memory_malloc
 
     ; fill out entity struct
     mov rbx, [rsp + 8]      
     mov [rax], rbx
+
     mov rbx, [rsp + 16]
     mov [rax + 8], rbx
+
     mov rbx, 58                ;block width
     mov [rax + 16], rbx
+    
     mov rbx, 20                 ;block height
     mov [rax + 24], rbx
 
@@ -635,7 +661,8 @@ create_row_start:
     mov rsi, rax
     call linked_list_push_back
 
-    ; advance x coord for next iteration
+    
+    ; increse x coord for next iteration
     mov rax, [rsp + 8]
     add rax, 78
     mov [rsp + 8], rax

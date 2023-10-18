@@ -73,16 +73,17 @@ linked_list_push_back:
     mov rbp, rsp
 
     mov rbx, rdi
+    ; ADRESS OF x of entity/struct = [rbx]
 
 
 
     ; find end of list
     linked_list_push_back_find_end:
-        mov rcx, [rbx + 0x8]     ; get next pointer ///  (width)+ 8 gives next X 
+        mov rcx, [rbx + 0x8]     ; get next pointer
         cmp rcx, 0x0 ; if null then we are at the last node
         je linked_list_push_back_do_insert
 
-        add rbx, 0x10           ; x y hight _width_  8 + (8+8) = 8 + 10
+        add rbx, 16           
         jmp linked_list_push_back_find_end
 
     linked_list_push_back_do_insert:
@@ -205,7 +206,7 @@ allocate_node:
 
     push rdi                ;value to be stored in node
 
-    mov rdi, 0x10   
+    mov rdi, 16   
     call memory_malloc      ;allocate space for node
 
                             ;memory_malloc(rdi) 

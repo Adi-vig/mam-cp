@@ -5,10 +5,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 global assert_not_null
-global assert_null
+
 global exit
-global game_malloc
-global game_mmap
 global get_time
 global print
 global print_num
@@ -151,32 +149,7 @@ assert_not_null_end:
     pop rbp
     ret
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Assert the input is null.
-;
-; @param rdi
-;   Value to check is null.
-;
-; @param rsi
-;   Pointer to error message string.
-;
-assert_null:
-    push rbp
-    mov rbp, rsp
 
-    cmp rdi, 0x0
-    je assert_null_end
-
-    mov rdi, rsi
-    call print
-
-    mov rdi, 0x1
-    call exit
-
-assert_null_end:
-
-    pop rbp
-    ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Exit the program.
@@ -185,7 +158,7 @@ assert_null_end:
 ;   Exit code.
 ;
 exit:
-    mov rax, 0x3c
+    mov rax, 60
     syscall
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -243,6 +216,8 @@ get_time:
     mov rdx, 0x0
     mov rbx, 1000
     div rbx ; convert to milliseconds
+
+    ; result storerd in rax to be returned as time in milliseconds
 
     pop rbp
     ret
