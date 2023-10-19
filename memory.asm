@@ -23,7 +23,7 @@ memory_malloc:
     ;rdi = number of bytes to allocate
 
   
-    lea rax, malloc_memory  ;return rax
+    lea rax, Big_array  ;return rax
     mov rbx, [index]
     add rax, rbx
 
@@ -34,10 +34,10 @@ memory_malloc:
 
 section .data
     malloc_init: dq 0x0
-    ; malloc_memory: dq 0x0
-    ; malloc_memory: resb 4096000
+    ; Big_array: dq 0x0
+    ; Big_array: resb 4096000
 
-    malloc_memory TIMES 4096000 db 0
+    Big_array TIMES 4096000 db 0
     index : dq 0x0
 
     mmap_failed: db "mmap failed", 0xa, 0x0
