@@ -1,9 +1,3 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;         Distributed under the Boost Software License, Version 1.0.          ;;
-;;            (See accompanying file LICENSE or copy at                        ;;
-;;                 https://www.boost.org/LICENSE_1_0.txt)                      ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 global linked_list_init
 global linked_list_iterator
 global linked_list_iterator_advance
@@ -12,18 +6,6 @@ global linked_list_iterator_value
 global linked_list_push_back
 
 extern memory_malloc
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Simple linked list data structure. Consists of a head node then optional data nodes.
-; Each node has the following layout:
-; +-------+
-; | value | = 8 bytes
-; +-------+
-; |  ptr  | = 8 bytes
-; +-------+
-;
-; This means that each node can store 8 bytes of data, which could be anything, even a pointer to a larger allocated
-; block of data
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Create a new linked list.
@@ -133,13 +115,17 @@ linked_list_iterator_remove:
     push rbp
     mov rbp, rsp
 
+    ; rdi has head node
+    ; rsi has node to be removed
+
+
     linked_list_remove_find_begin:
         mov rax, [rdi + 8]
-        cmp rax, 0x0
+        cmp rax, 0x0            ; end of list
         je linked_list_remove_end
 
         cmp rax, rsi
-        je linked_list_remove_find_end
+        je linked_list_remove_find_end  ;next node is node to be deleted ---- found 
 
         mov rdi, rax
         jmp linked_list_remove_find_begin

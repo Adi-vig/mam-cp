@@ -34,7 +34,7 @@ extern render_begin_clear_window
 extern draw_rectangle
 extern render_end
 extern print
-extern print_num
+; extern print_num
 
 
 

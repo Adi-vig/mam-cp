@@ -26,7 +26,7 @@ extern linked_list_iterator_value
 extern linked_list_push_back
 extern memory_malloc
 extern print
-extern print_num
+; extern print_num
 extern render_begin_clear_window
 extern render_end
 extern sleep_ms
@@ -381,7 +381,7 @@ brick_collision_loop_end:
     ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Handle ball paddle collision. This function assumes the collision has already been detected and needs resolving.
+; Handle ball paddle collision.
 ;
 handle_ball_paddle_collision: 
     push rbp
@@ -779,7 +779,7 @@ section .data
 
     paddle_x: dq 0x12c
     paddle_y: dq 0x30c
-    paddle_width: dq 0xc8
+    paddle_width: dq 0xc8   ;200
     paddle_height: dq 0x14
 
 
